@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator", "Fennekin23.BuilderGenerator\Fennekin23.BuilderGenerator.csproj", "{76C77DA9-F6B1-4DBA-98B1-BFA1793BC2AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator", "src\Fennekin23.BuilderGenerator\Fennekin23.BuilderGenerator.csproj", "{76C77DA9-F6B1-4DBA-98B1-BFA1793BC2AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator.Sample", "Fennekin23.BuilderGenerator.Sample\Fennekin23.BuilderGenerator.Sample.csproj", "{2AFC9124-8962-42FD-8BFA-F509DF54B483}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator.Sample", "src\Fennekin23.BuilderGenerator.Sample\Fennekin23.BuilderGenerator.Sample.csproj", "{2AFC9124-8962-42FD-8BFA-F509DF54B483}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
