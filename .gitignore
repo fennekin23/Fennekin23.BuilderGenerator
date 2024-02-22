@@ -2,6 +2,7 @@
 *.*~
 project.lock.json
 .DS_Store
+*.log
 *.pyc
 nupkg/
 
@@ -33,7 +34,6 @@ nupkg/
 [Rr]eleases/
 x64/
 x86/
-build/
 bld/
 [Bb]in/
 [Oo]bj/
