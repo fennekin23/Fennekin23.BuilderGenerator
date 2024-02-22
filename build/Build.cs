@@ -10,8 +10,8 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 [ShutdownDotNetAfterServerBuild]
 [GitHubActions("BuildAndPackage",
     GitHubActionsImage.UbuntuLatest,
-    GitHubActionsImage.WindowsLatest,
-    GitHubActionsImage.MacOsLatest,
+    // GitHubActionsImage.WindowsLatest,
+    // GitHubActionsImage.MacOsLatest,
     OnPushTags = ["*"],
     OnPushBranches = ["main"],
     OnPullRequestBranches = ["*"],
