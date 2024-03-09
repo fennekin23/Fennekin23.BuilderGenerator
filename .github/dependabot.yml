@@ -5,6 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    reviewers:
+      - "fennekin23"
   - package-ecosystem: "nuget"
     directory: "/"
     groups:
@@ -17,4 +19,6 @@ updates:
           - "patch"
     schedule: 
       interval: weekly
+    reviewers:
+      - "fennekin23"
     
