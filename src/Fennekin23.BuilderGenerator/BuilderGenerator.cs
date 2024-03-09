@@ -1,7 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using System.Text;
-using System.Threading;
 using Fennekin23.BuilderGenerator.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,26 +42,32 @@ public class BuilderGenerator : IIncrementalGenerator
         var name = symbol.Name;
         var nameSpace = symbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : symbol.ContainingNamespace.ToString();
         var accessibility = symbol.DeclaredAccessibility.ToString().ToLowerInvariant();
-        var constructorParameters = new List<ParameterDefinition>();
 
-        var constructor = FindConstructor(symbol);
-        if (constructor?.Parameters != null)
-        {
-            foreach (var parameter in constructor.Parameters)
-            {
-                constructorParameters.Add(new ParameterDefinition(parameter.Name, parameter.Type.Name));
-            }
-        }
+        ImmutableArray<ISymbol> symbolMembers = symbol.GetMembers();
 
-        return new ItemToGenerate(name, nameSpace, accessibility, constructorParameters);
+        ct.ThrowIfCancellationRequested();
+        
+        IMethodSymbol? constructor = FindConstructor(symbolMembers);
+        List<ParameterDefinition> constructorParametersDefinitions = GetConstructorParametersDefinitions(constructor);
+        
+        ct.ThrowIfCancellationRequested();
+        
+        List<IPropertySymbol> properties = FindProperties(symbolMembers);
+        List<PropertyDefinition> propertiesDefinitions = GetPropertiesDefinitions(constructorParametersDefinitions, properties);
+
+        return new ItemToGenerate(name,
+            nameSpace,
+            accessibility,
+            constructorParametersDefinitions,
+            propertiesDefinitions);
     }
 
-    private static IMethodSymbol? FindConstructor(INamedTypeSymbol symbol)
+    private static IMethodSymbol? FindConstructor(ImmutableArray<ISymbol> symbolMembers)
     {
         IMethodSymbol? constructor = null;
         int maxParameters = 0;
 
-        foreach (var member in symbol.GetMembers())
+        foreach (var member in symbolMembers)
         {
             if (member is not IMethodSymbol
                 {
@@ -80,6 +84,48 @@ public class BuilderGenerator : IIncrementalGenerator
         }
         
         return constructor;
+    }
+
+    private static List<ParameterDefinition> GetConstructorParametersDefinitions(IMethodSymbol? constructor)
+    {
+        return constructor?.Parameters == null
+            ? []
+            : constructor.Parameters
+                .Select(p => new ParameterDefinition(p.Name, p.Type.Name))
+                .ToList();
+    }
+    
+    private static List<IPropertySymbol> FindProperties(ImmutableArray<ISymbol> symbolMembers)
+    {
+        List<IPropertySymbol> properties = [];
+        
+        foreach (var member in symbolMembers)
+        {
+            if (member is not IPropertySymbol
+                {
+                    DeclaredAccessibility: Accessibility.Public,
+                    IsReadOnly: false,
+                    SetMethod: { MethodKind: MethodKind.PropertySet }
+                } prop)
+                continue;
+            
+            properties.Add(prop);
+        }
+        
+        return properties;
+    }
+
+    private static List<PropertyDefinition> GetPropertiesDefinitions(
+        List<ParameterDefinition> constructorParametersDefinitions,
+        List<IPropertySymbol> properties)
+    {
+        return properties
+            .Where(property => !IsPositional(property))
+            .Select(p => new PropertyDefinition(p.Name, p.Type.Name))
+            .ToList();
+
+        bool IsPositional(IPropertySymbol property)
+            => constructorParametersDefinitions.Any(i => i.Name.Equals(property.Name));
     }
     
     private static void Execute(in ItemToGenerate itemToGenerate, SourceProductionContext context)

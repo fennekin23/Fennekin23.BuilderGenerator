@@ -80,19 +80,44 @@ namespace Fennekin23.BuilderGenerator
                     """, param.Type, fieldName, builderClassName, param.Name)
                 .AppendLine();
         }
+        
+        foreach (var param in item.Properties)
+        {
+            var fieldName = ToFieldName(param.Name);
+            sb.AppendFormat(
+                    """
+                            private {0} {1} = default!;
+                            public {2} With{3}({0} value)
+                            {{
+                                {1} = value;
+                                return this;
+                            }}
+                    """, param.Type, fieldName, builderClassName, param.Name)
+                .AppendLine();
+        }
 
         sb.AppendFormat(
             """
                     public {0} Build()
                     {{
-                        return new {0}({1});
+                        return new {0}({1})
+                        {{
+            
+            """,
+            item.FullyQualifiedName,
+            string.Join(", ", item.ConstructorParameters.Select(i => $"{i.Name}: {ToFieldName(i.Name)}")));
+
+        var ss = string.Join(",\n\r", item.Properties.Select(p => $"                {p.Name} = {ToFieldName(p.Name)}"));
+        sb.Append(ss);
+        
+        sb.AppendFormat(
+            """
+            
+                        }};
                     }}
                 }}
             }}
-            """,
-            item.FullyQualifiedName,
-            string.Join(", ", item.ConstructorParameters.Select(i => $"{i.Name}: {ToFieldName(i.Name)}"))
-            );
+            """);
         
         return sb.ToString();
     }

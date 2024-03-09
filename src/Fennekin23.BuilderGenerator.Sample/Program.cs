@@ -5,6 +5,8 @@ using Fennekin23.BuilderGenerator.Sample;
 var sample = new SamplePublicRecordBuilder()
     .WithStringProperty("abcdef")
     .WithIntProperty(123456)
+    .WithBooleanProperty(true)
+    .WithLongProperty(long.MaxValue)
     .Build();
 
 Console.WriteLine(sample);
