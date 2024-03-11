@@ -38,9 +38,6 @@ jobs:
             8.0.101
             7.0.x
             6.0.x
-            5.0.x
-            3.1.x
-            2.2.x
       - name: 'Cache: .nuke/temp, ~/.nuget/packages'
         uses: actions/cache@v4
         with:
@@ -61,9 +58,6 @@ jobs:
   #           8.0.101
   #           7.0.x
   #           6.0.x
-  #           5.0.x
-  #           3.1.x
-  #           2.2.x
   #     - name: 'Cache: .nuke/temp, ~/.nuget/packages'
   #       uses: actions/cache@v4
   #       with:
@@ -84,9 +78,6 @@ jobs:
   #           8.0.101
   #           7.0.x
   #           6.0.x
-  #           5.0.x
-  #           3.1.x
-  #           2.2.x
   #     - name: 'Cache: .nuke/temp, ~/.nuget/packages'
   #       uses: actions/cache@v4
   #       with:
