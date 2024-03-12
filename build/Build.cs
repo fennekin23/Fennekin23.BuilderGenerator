@@ -3,8 +3,8 @@ using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitVersion;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [ShutdownDotNetAfterServerBuild]
@@ -36,17 +36,21 @@ class Build : NukeBuild
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
 
+    [GitVersion]
+    readonly GitVersion GitVersion;
+    
     Target Clean => _ => _
-        .Before(Restore)
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
         });
 
     Target Restore => _ => _
+        .DependsOn(Clean)
         .Executes(() =>
         {
-            DotNetRestore(s => s.SetProjectFile(Solution));
+            DotNetRestore(s => 
+                s.SetProjectFile(Solution));
         });
 
     Target Compile => _ => _
@@ -56,7 +60,11 @@ class Build : NukeBuild
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
+                .SetContinuousIntegrationBuild(IsServerBuild)
+                .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                .SetFileVersion(GitVersion.AssemblySemFileVer)
+                .SetInformationalVersion(GitVersion.InformationalVersion)
+                .EnableNoLogo()
                 .EnableNoRestore());
         });
 }
