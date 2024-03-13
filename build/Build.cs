@@ -5,6 +5,10 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitVersion;
+using Nuke.Common.Tools.MinVer;
+using Nuke.Common.Utilities.Collections;
+using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [ShutdownDotNetAfterServerBuild]
@@ -28,13 +32,16 @@ class Build : NukeBuild
 
     public static int Main () => Execute<Build>(x => x.Compile);
 
+    [MinVer]
+    readonly MinVer MinVer;
+    
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     [Solution(GenerateProjects = true, SuppressBuildProjectCheck = true)]
     readonly Solution Solution;
 
-    AbsolutePath SourceDirectory => RootDirectory / "src";
+    readonly AbsolutePath SourceDirectory = RootDirectory / "src";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -53,10 +60,17 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
+            ReportSummary(s =>
+                s.AddPairWhenValueNotNull("Version", MinVer.MinVerVersion));
+            
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
+                .SetContinuousIntegrationBuild(IsServerBuild)
+                .SetAssemblyVersion(MinVer.AssemblyVersion)
+                .SetFileVersion(MinVer.FileVersion)
+                .SetInformationalVersion(MinVer.MinVerVersion)
+                .EnableNoLogo()
                 .EnableNoRestore());
         });
 }
