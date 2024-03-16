@@ -42,12 +42,14 @@ class Build : NukeBuild
     readonly Solution Solution;
 
     readonly AbsolutePath SourceDirectory = RootDirectory / "src";
+    readonly AbsolutePath ArtifactsDirectory = RootDirectory / "artifacts";
 
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -70,6 +72,26 @@ class Build : NukeBuild
                 .SetAssemblyVersion(MinVer.AssemblyVersion)
                 .SetFileVersion(MinVer.FileVersion)
                 .SetInformationalVersion(MinVer.MinVerVersion)
+                .EnableNoLogo()
+                .EnableNoRestore());
+        });
+    
+    Target Pack => _ => _
+        .DependsOn(Compile)
+        //.After(Test)
+        .Produces(ArtifactsDirectory)
+        .Executes(() =>
+        {
+            ReportSummary(s =>
+                s.AddPairWhenValueNotNull("Version", MinVer.PackageVersion));
+            
+            DotNetPack(s => s
+                .SetProject(Solution.Fennekin23_BuilderGenerator)
+                .SetConfiguration(Configuration)
+                .SetContinuousIntegrationBuild(IsServerBuild)
+                .SetOutputDirectory(ArtifactsDirectory)
+                .SetVersion(MinVer.PackageVersion)
+                .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
