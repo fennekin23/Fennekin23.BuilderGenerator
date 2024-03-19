@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{55A6E7E5-0F2A-4CC2-BE64-AD3570A9E1E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fennekin23.BuilderGenerator.Tests", "tests\Fennekin23.BuilderGenerator.Tests\Fennekin23.BuilderGenerator.Tests.csproj", "{B0793FE7-5E55-419E-8393-46DF574C21A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,5 +25,9 @@ Global
 		{2AFC9124-8962-42FD-8BFA-F509DF54B483}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AFC9124-8962-42FD-8BFA-F509DF54B483}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AFC9124-8962-42FD-8BFA-F509DF54B483}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0793FE7-5E55-419E-8393-46DF574C21A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0793FE7-5E55-419E-8393-46DF574C21A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0793FE7-5E55-419E-8393-46DF574C21A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0793FE7-5E55-419E-8393-46DF574C21A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -75,10 +75,22 @@ class Build : NukeBuild
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
+
+    Target Test => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTest(s => s
+                .SetProjectFile(Solution.Fennekin23_BuilderGenerator_Tests)
+                .SetConfiguration(Configuration)
+                .SetLoggers(["GitHubActions"])
+                .EnableNoLogo()
+                .EnableNoRestore());
+        });
     
     Target Pack => _ => _
         .DependsOn(Compile)
-        //.After(Test)
+        .After(Test)
         .Produces(ArtifactsDirectory)
         .Executes(() =>
         {
