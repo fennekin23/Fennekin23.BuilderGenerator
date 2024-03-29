@@ -1,10 +1,8 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Fennekin23.BuilderGenerator.Sample;
 
-using Fennekin23.BuilderGenerator.Sample;
-
-var sample = new SamplePublicRecordBuilder()
-    .WithStringProperty("abcdef")
-    .WithIntProperty(123456)
+var sample = new SamplePublicPositionalRecordBuilder()
+    .WithStringProperty("Hello, world!")
+    .WithIntProperty(int.MaxValue)
     .WithBooleanProperty(true)
     .WithLongProperty(long.MaxValue)
     .Build();
