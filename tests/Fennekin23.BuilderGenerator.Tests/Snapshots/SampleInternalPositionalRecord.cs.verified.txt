@@ -9,40 +9,40 @@
 
 #nullable enable
 
-namespace Fennekin23.BuilderGenerator
+namespace Fennekin23.BuilderGenerator.Tests.Samples
 {
     /// <summary>
-    /// Builder class for <see cref="Fennekin23.BuilderGenerator.SamplePublicPositionalRecord" />
+    /// Builder class for <see cref="Fennekin23.BuilderGenerator.Tests.Samples.SampleInternalPositionalRecord" />
     /// <summary>
-    public sealed partial class SamplePublicPositionalRecordBuilder
+    internal sealed partial class SampleInternalPositionalRecordBuilder
     {
         private String _stringproperty = default!;
-        public SamplePublicPositionalRecordBuilder WithStringProperty(String value)
+        public SampleInternalPositionalRecordBuilder WithStringProperty(String value)
         {
             _stringproperty = value;
             return this;
         }
         private Int32 _intproperty = default!;
-        public SamplePublicPositionalRecordBuilder WithIntProperty(Int32 value)
+        public SampleInternalPositionalRecordBuilder WithIntProperty(Int32 value)
         {
             _intproperty = value;
             return this;
         }
         private Boolean _booleanproperty = default!;
-        public SamplePublicPositionalRecordBuilder WithBooleanProperty(Boolean value)
+        public SampleInternalPositionalRecordBuilder WithBooleanProperty(Boolean value)
         {
             _booleanproperty = value;
             return this;
         }
         private Int64 _longproperty = default!;
-        public SamplePublicPositionalRecordBuilder WithLongProperty(Int64 value)
+        public SampleInternalPositionalRecordBuilder WithLongProperty(Int64 value)
         {
             _longproperty = value;
             return this;
         }
-        public Fennekin23.BuilderGenerator.SamplePublicPositionalRecord Build()
+        public Fennekin23.BuilderGenerator.Tests.Samples.SampleInternalPositionalRecord Build()
         {
-            return new Fennekin23.BuilderGenerator.SamplePublicPositionalRecord(StringProperty: _stringproperty, IntProperty: _intproperty)
+            return new Fennekin23.BuilderGenerator.Tests.Samples.SampleInternalPositionalRecord(StringProperty: _stringproperty, IntProperty: _intproperty)
             {
                 BooleanProperty = _booleanproperty,
                 LongProperty = _longproperty
