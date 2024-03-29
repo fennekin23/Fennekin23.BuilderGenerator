@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net48;$(TargetFrameworks)</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -30,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Fennekin23.BuilderGenerator\Fennekin23.BuilderGenerator.csproj" />
+      <ProjectReference Include="..\..\src\Fennekin23.BuilderGenerator\Fennekin23.BuilderGenerator.csproj" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>

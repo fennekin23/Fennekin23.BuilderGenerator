@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Fennekin23.BuilderGenerator.Tests;
 
-internal class TestHelpers
+internal static class TestHelpers
 {
     public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(params string[] source)
         where T : IIncrementalGenerator, new()
@@ -16,7 +16,7 @@ internal class TestHelpers
         return (diagnostics, trees.LastOrDefault() ?? string.Empty);
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TGenerator, TTrackingNames>(params string[] sources)
+    private static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TGenerator, TTrackingNames>(params string[] sources)
         where TGenerator : IIncrementalGenerator, new()
     {
         // get all the const string fields
@@ -30,7 +30,7 @@ internal class TestHelpers
         return GetGeneratedTrees<TGenerator>(sources, trackingNames);
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(string[] source, params string[] stages)
+    private static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(string[] source, params string[] stages)
         where T : IIncrementalGenerator, new()
     {
         var syntaxTrees = source.Select(static x => CSharpSyntaxTree.ParseText(x));
@@ -64,7 +64,7 @@ internal class TestHelpers
             disabledOutputs: IncrementalGeneratorOutputKind.None,
             trackIncrementalGeneratorSteps: true);
 
-        GeneratorDriver driver = CSharpGeneratorDriver.Create([generator], driverOptions: opts);
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(new List<ISourceGenerator> { generator }.AsReadOnly(), driverOptions: opts);
 
         var clone = compilation.Clone();
         // Run twice, once with a clone of the compilation

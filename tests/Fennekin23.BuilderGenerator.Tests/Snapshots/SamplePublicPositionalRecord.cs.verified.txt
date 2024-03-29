@@ -9,10 +9,10 @@
 
 #nullable enable
 
-namespace Fennekin23.BuilderGenerator
+namespace Fennekin23.BuilderGenerator.Tests.Samples
 {
     /// <summary>
-    /// Builder class for <see cref="Fennekin23.BuilderGenerator.SamplePublicPositionalRecord" />
+    /// Builder class for <see cref="Fennekin23.BuilderGenerator.Tests.Samples.SamplePublicPositionalRecord" />
     /// <summary>
     public sealed partial class SamplePublicPositionalRecordBuilder
     {
@@ -40,9 +40,9 @@ namespace Fennekin23.BuilderGenerator
             _longproperty = value;
             return this;
         }
-        public Fennekin23.BuilderGenerator.SamplePublicPositionalRecord Build()
+        public Fennekin23.BuilderGenerator.Tests.Samples.SamplePublicPositionalRecord Build()
         {
-            return new Fennekin23.BuilderGenerator.SamplePublicPositionalRecord(StringProperty: _stringproperty, IntProperty: _intproperty)
+            return new Fennekin23.BuilderGenerator.Tests.Samples.SamplePublicPositionalRecord(StringProperty: _stringproperty, IntProperty: _intproperty)
             {
                 BooleanProperty = _booleanproperty,
                 LongProperty = _longproperty
