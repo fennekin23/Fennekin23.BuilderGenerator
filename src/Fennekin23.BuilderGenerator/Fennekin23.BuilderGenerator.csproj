@@ -14,7 +14,15 @@
         <IsRoslynComponent>true</IsRoslynComponent>
 
         <RootNamespace>Fennekin23.BuilderGenerator</RootNamespace>
+        
         <PackageId>Fennekin23.BuilderGenerator</PackageId>
+        <Title>Fennekin23.BuilderGenerator</Title>
+        <Authors>fennekin23</Authors>
+        <Description>A Source Generator package that generates builder classes for records, to allow convenient complex object building.</Description>
+        <PackageProjectUrl>https://github.com/fennekin23/Fennekin23.BuilderGenerator</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/fennekin23/Fennekin23.BuilderGenerator</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>

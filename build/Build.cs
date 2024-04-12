@@ -117,13 +117,21 @@ class Build : NukeBuild
 
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
-        .OnlyWhenStatic(() => IsTag && IsServerBuild)
+        // .OnlyWhenStatic(() => IsTag && IsServerBuild)
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
+            
+            DotNetNuGetAddSource(s => s
+                .SetUsername(GitHubActions.RepositoryOwner)
+                .SetPassword(GitHubActions.Token)
+                .SetSource(NugetFeedUrl)
+                .SetStorePasswordInClearText(true)
+                .SetName("github"));
+            
             DotNetNuGetPush(s => s
                 .SetApiKey(GitHubActions.Token)
-                .SetSource(NugetFeedUrl)
+                .SetSource("github")
                 .EnableSkipDuplicate()
                 .CombineWith(packages, (x, package) => x
                     .SetTargetPath(package)));
