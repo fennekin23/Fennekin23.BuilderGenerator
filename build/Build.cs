@@ -20,6 +20,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     OnPushBranches = ["main"],
     OnPullRequestBranches = ["*"],
     AutoGenerate = false,
+    EnableGitHubToken = true,
     InvokedTargets = [nameof(Clean), nameof(Compile)]
 )]
 class Build : NukeBuild
@@ -43,6 +44,12 @@ class Build : NukeBuild
 
     readonly AbsolutePath SourceDirectory = RootDirectory / "src";
     readonly AbsolutePath ArtifactsDirectory = RootDirectory / "artifacts";
+
+    GitHubActions GitHubActions => GitHubActions.Instance;
+    
+    bool IsTag => GitHubActions?.Ref?.StartsWith("refs/tags/") ?? false;
+
+    const string NugetFeedUrl = "https://nuget.pkg.github.com/NAMESPACE/index.json";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -106,5 +113,19 @@ class Build : NukeBuild
                 .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
+        });
+
+    Target PushToNuGet => _ => _
+        .DependsOn(Pack)
+        .OnlyWhenStatic(() => IsTag && IsServerBuild)
+        .Executes(() =>
+        {
+            var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
+            DotNetNuGetPush(s => s
+                .SetApiKey(GitHubActions.Token)
+                .SetSource(NugetFeedUrl)
+                .EnableSkipDuplicate()
+                .CombineWith(packages, (x, package) => x
+                    .SetTargetPath(package)));
         });
 }

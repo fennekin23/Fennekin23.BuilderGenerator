@@ -75,6 +75,7 @@
               "Clean",
               "Compile",
               "Pack",
+              "PushToNuGet",
               "Restore",
               "Test"
             ]
@@ -93,6 +94,7 @@
               "Clean",
               "Compile",
               "Pack",
+              "PushToNuGet",
               "Restore",
               "Test"
             ]
