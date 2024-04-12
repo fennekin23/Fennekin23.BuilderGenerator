@@ -49,7 +49,7 @@ class Build : NukeBuild
     
     bool IsTag => GitHubActions?.Ref?.StartsWith("refs/tags/") ?? false;
 
-    const string NugetFeedUrl = "https://nuget.pkg.github.com/NAMESPACE/index.json";
+    const string NugetFeedUrl = "https://nuget.pkg.github.com/fennekin23/index.json";
 
     Target Clean => _ => _
         .Before(Restore)
