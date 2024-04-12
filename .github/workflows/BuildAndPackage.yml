@@ -48,9 +48,11 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: Clean, Test, Pack'
-        run: ./build.cmd Clean Test Pack
+      - name: 'Run: Clean, Test, Pack, PushToNuGet'
+        run: ./build.cmd Clean Test Pack PushToNuGet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: artifacts
+          path: artifacts        
