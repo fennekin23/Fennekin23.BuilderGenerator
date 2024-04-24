@@ -48,7 +48,7 @@ class Build : NukeBuild
     bool IsTag => GitHubActions?.Ref?.StartsWith("refs/tags/") ?? false;
 
     [Parameter] [Secret] readonly string NuGetApiKey;
-    const string NugetFeedUrl = "https://api.nuget.org/v3/index.json";
+    [Parameter] readonly string NuGetUrl;
 
     Target Clean => _ => _
         .Before(Restore)
@@ -117,6 +117,7 @@ class Build : NukeBuild
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
         .Requires(() => NuGetApiKey)
+        .Requires(() => NuGetUrl)
         .OnlyWhenStatic(() => true && IsServerBuild)
         .Executes(() =>
         {
@@ -124,7 +125,7 @@ class Build : NukeBuild
             
             DotNetNuGetPush(s => s
                 .SetApiKey(NuGetApiKey)
-                .SetSource(NugetFeedUrl)
+                .SetSource(NuGetUrl)
                 .EnableSkipDuplicate()
                 .CombineWith(packages, (x, package) => x
                     .SetTargetPath(package)));
