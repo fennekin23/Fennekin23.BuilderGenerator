@@ -78,6 +78,7 @@ class Build : NukeBuild
                 .SetAssemblyVersion(MinVer.AssemblyVersion)
                 .SetFileVersion(MinVer.FileVersion)
                 .SetInformationalVersion(MinVer.MinVerVersion)
+                .SetVersion(MinVer.MinVerVersion)
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
