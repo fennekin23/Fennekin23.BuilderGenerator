@@ -101,14 +101,14 @@ class Build : NukeBuild
         .Executes(() =>
         {
             ReportSummary(s =>
-                s.AddPairWhenValueNotNull("Version", MinVer.PackageVersion));
+                s.AddPairWhenValueNotNull("Version", GetPackageVersion()));
             
             DotNetPack(s => s
                 .SetProject(Solution.Fennekin23_BuilderGenerator)
                 .SetConfiguration(Configuration)
                 .SetContinuousIntegrationBuild(IsServerBuild)
                 .SetOutputDirectory(ArtifactsDirectory)
-                .SetVersion(MinVer.PackageVersion)
+                .SetVersion(GetPackageVersion())
                 .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
@@ -130,4 +130,9 @@ class Build : NukeBuild
                 .CombineWith(packages, (x, package) => x
                     .SetTargetPath(package)));
         });
+
+    private string GetPackageVersion() =>
+        GitHubActions.IsPullRequest
+            ? $"{MinVer.PackageVersion}+{GitHubActions.PullRequestNumber}.{GitHubActions.RunAttempt}"
+            : MinVer.PackageVersion;
 }
