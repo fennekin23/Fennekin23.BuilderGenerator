@@ -26,6 +26,9 @@ on:
     branches:
       - '*'
 
+env:
+  MINVERBUILDMETADATA: "${{ github.event.number }}.${{ github.run_attempt }}"
+
 jobs:
   ubuntu-latest:
     name: ubuntu-latest
