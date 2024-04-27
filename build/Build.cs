@@ -69,15 +69,15 @@ class Build : NukeBuild
         .Executes(() =>
         {
             ReportSummary(s =>
-                s.AddPairWhenValueNotNull("Version", GetPrVersion(MinVer.MinVerVersion)));
+                s.AddPairWhenValueNotNull("Version", MinVer.MinVerVersion));
             
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .SetContinuousIntegrationBuild(IsServerBuild)
-                .SetAssemblyVersion(GetPrVersion(MinVer.AssemblyVersion))
-                .SetFileVersion(GetPrVersion(MinVer.FileVersion))
-                .SetInformationalVersion(GetPrVersion(MinVer.MinVerVersion))
+                .SetAssemblyVersion(MinVer.AssemblyVersion)
+                .SetFileVersion(MinVer.FileVersion)
+                .SetInformationalVersion(MinVer.MinVerVersion)
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
@@ -101,14 +101,14 @@ class Build : NukeBuild
         .Executes(() =>
         {
             ReportSummary(s =>
-                s.AddPairWhenValueNotNull("Version", GetPrVersion(MinVer.PackageVersion)));
+                s.AddPairWhenValueNotNull("Version", MinVer.PackageVersion));
             
             DotNetPack(s => s
                 .SetProject(Solution.Fennekin23_BuilderGenerator)
                 .SetConfiguration(Configuration)
                 .SetContinuousIntegrationBuild(IsServerBuild)
                 .SetOutputDirectory(ArtifactsDirectory)
-                .SetVersion(GetPrVersion(MinVer.PackageVersion))
+                .SetVersion(MinVer.PackageVersion)
                 .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
@@ -130,9 +130,4 @@ class Build : NukeBuild
                 .CombineWith(packages, (x, package) => x
                     .SetTargetPath(package)));
         });
-
-    private string GetPrVersion(string version) => 
-        GitHubActions.IsPullRequest
-            ? $"{version}.{MinVer.MinVerBuildMetadata}"
-            : version;
 }
