@@ -69,15 +69,15 @@ class Build : NukeBuild
         .Executes(() =>
         {
             ReportSummary(s =>
-                s.AddPairWhenValueNotNull("Version", MinVer.MinVerVersion));
+                s.AddPairWhenValueNotNull("Version", GetPrVersion(MinVer.MinVerVersion)));
             
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .SetContinuousIntegrationBuild(IsServerBuild)
-                .SetAssemblyVersion(MinVer.AssemblyVersion)
-                .SetFileVersion(MinVer.FileVersion)
-                .SetInformationalVersion(MinVer.MinVerVersion)
+                .SetAssemblyVersion(GetPrVersion(MinVer.AssemblyVersion))
+                .SetFileVersion(GetPrVersion(MinVer.FileVersion))
+                .SetInformationalVersion(GetPrVersion(MinVer.MinVerVersion))
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
@@ -101,14 +101,14 @@ class Build : NukeBuild
         .Executes(() =>
         {
             ReportSummary(s =>
-                s.AddPairWhenValueNotNull("Version", GetPackageVersion()));
+                s.AddPairWhenValueNotNull("Version", GetPrVersion(MinVer.PackageVersion)));
             
             DotNetPack(s => s
                 .SetProject(Solution.Fennekin23_BuilderGenerator)
                 .SetConfiguration(Configuration)
                 .SetContinuousIntegrationBuild(IsServerBuild)
                 .SetOutputDirectory(ArtifactsDirectory)
-                .SetVersion(GetPackageVersion())
+                .SetVersion(GetPrVersion(MinVer.PackageVersion))
                 .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
@@ -131,8 +131,8 @@ class Build : NukeBuild
                     .SetTargetPath(package)));
         });
 
-    private string GetPackageVersion() =>
+    private string GetPrVersion(string version) => 
         GitHubActions.IsPullRequest
-            ? $"{MinVer.PackageVersion}+{GitHubActions.PullRequestNumber}.{GitHubActions.RunAttempt}"
-            : MinVer.PackageVersion;
+            ? $"{version}.{MinVer.MinVerBuildMetadata}"
+            : version;
 }
