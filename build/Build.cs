@@ -110,8 +110,7 @@ class Build : NukeBuild
                 .SetContinuousIntegrationBuild(IsServerBuild)
                 .SetOutputDirectory(ArtifactsDirectory)
                 .SetVersion(MinVer.PackageVersion)
-                .SetVersionSuffix(MinVer.MinVerBuildMetadata)
-                .EnableNoBuild()
+                //.EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
