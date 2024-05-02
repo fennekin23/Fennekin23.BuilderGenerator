@@ -48,10 +48,16 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
+      # - name: Set build metadata version
+      #   if: github.event_name == 'pull_request'
+      #   run: |
+      #     echo "MINVERBUILDMETADATA=${{ github.event.number }}.${{ github.run_id }}.${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: 'Run: Clean, Test, Pack, PushToNuGet'
         run: ./build.cmd Clean Test Pack PushToNuGet
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NuGetApiKey: ${{ secrets.NUGET_API_KEY }}
+          NuGetUrl: ${{ vars.NUGET_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts

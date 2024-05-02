@@ -2,7 +2,7 @@
 
 A Source Generator package that generates [builder](https://refactoring.guru/design-patterns/builder) classes for records, to allow convenient complex object building.
 
-> This source generator requires the .NET 7 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 7.0.100
+> This source generator requires the .NET 7 SDK. You can target earlier frameworks like .NET 6 etc, but the _SDK_ must be at least 7.0.100
 
 To use the generator, add the `[BuilderGenerator]` attribute to a record. For example:
 

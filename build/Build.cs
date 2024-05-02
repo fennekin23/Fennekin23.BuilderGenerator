@@ -5,10 +5,8 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MinVer;
 using Nuke.Common.Utilities.Collections;
-using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [ShutdownDotNetAfterServerBuild]
@@ -49,7 +47,8 @@ class Build : NukeBuild
     
     bool IsTag => GitHubActions?.Ref?.StartsWith("refs/tags/") ?? false;
 
-    const string NugetFeedUrl = "https://nuget.pkg.github.com/fennekin23/index.json";
+    [Parameter] [Secret] readonly string NuGetApiKey;
+    [Parameter] readonly string NuGetUrl;
 
     Target Clean => _ => _
         .Before(Restore)
@@ -79,6 +78,7 @@ class Build : NukeBuild
                 .SetAssemblyVersion(MinVer.AssemblyVersion)
                 .SetFileVersion(MinVer.FileVersion)
                 .SetInformationalVersion(MinVer.MinVerVersion)
+                .SetVersion(MinVer.MinVerVersion)
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
@@ -117,21 +117,16 @@ class Build : NukeBuild
 
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
+        .Requires(() => NuGetApiKey)
+        .Requires(() => NuGetUrl)
         .OnlyWhenStatic(() => IsTag && IsServerBuild)
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
             
-            DotNetNuGetAddSource(s => s
-                .SetUsername(GitHubActions.RepositoryOwner)
-                .SetPassword(GitHubActions.Token)
-                .SetSource(NugetFeedUrl)
-                .SetStorePasswordInClearText(true)
-                .SetName("github"));
-            
             DotNetNuGetPush(s => s
-                .SetApiKey(GitHubActions.Token)
-                .SetSource("github")
+                .SetApiKey(NuGetApiKey)
+                .SetSource(NuGetUrl)
                 .EnableSkipDuplicate()
                 .CombineWith(packages, (x, package) => x
                     .SetTargetPath(package)));
