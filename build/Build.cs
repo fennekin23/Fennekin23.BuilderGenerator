@@ -110,7 +110,7 @@ class Build : NukeBuild
                 .SetContinuousIntegrationBuild(IsServerBuild)
                 .SetOutputDirectory(ArtifactsDirectory)
                 .SetVersion(MinVer.PackageVersion)
-                //.EnableNoBuild()
+                .EnableNoBuild()
                 .EnableNoLogo()
                 .EnableNoRestore());
         });
@@ -119,7 +119,7 @@ class Build : NukeBuild
         .DependsOn(Pack)
         .Requires(() => NuGetApiKey)
         .Requires(() => NuGetUrl)
-        .OnlyWhenStatic(() => true && IsServerBuild)
+        .OnlyWhenStatic(() => IsTag && IsServerBuild)
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
