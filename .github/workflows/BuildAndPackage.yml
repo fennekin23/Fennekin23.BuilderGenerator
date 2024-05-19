@@ -55,10 +55,9 @@ jobs:
       - name: 'Run: Clean, Test, Pack, PushToNuGet'
         run: ./build.cmd Clean Test Pack PushToNuGet
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NuGetApiKey: ${{ secrets.NUGET_API_KEY }}
           NuGetUrl: ${{ vars.NUGET_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: artifacts        
+          path: artifacts
