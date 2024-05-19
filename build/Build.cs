@@ -1,3 +1,4 @@
+using System;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
@@ -46,6 +47,7 @@ class Build : NukeBuild
     GitHubActions GitHubActions => GitHubActions.Instance;
     
     bool IsTag => GitHubActions?.Ref?.StartsWith("refs/tags/") ?? false;
+    bool IsDependabot => GitHubActions?.Actor.Equals("dependabot[bot]", StringComparison.OrdinalIgnoreCase) ?? false;
 
     [Parameter] [Secret] readonly string NuGetApiKey;
     [Parameter] readonly string NuGetUrl;
@@ -117,8 +119,7 @@ class Build : NukeBuild
 
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
-        .OnlyWhenStatic(() => IsTag && IsServerBuild 
-            && !string.IsNullOrEmpty(NuGetApiKey) && !string.IsNullOrEmpty(NuGetUrl))
+        .OnlyWhenStatic(() => IsTag && IsServerBuild && !IsDependabot)
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
