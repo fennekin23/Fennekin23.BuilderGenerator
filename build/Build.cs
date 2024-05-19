@@ -117,9 +117,8 @@ class Build : NukeBuild
 
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
-        .Requires(() => NuGetApiKey)
-        .Requires(() => NuGetUrl)
-        .OnlyWhenStatic(() => IsTag && IsServerBuild)
+        .OnlyWhenStatic(() => IsTag && IsServerBuild 
+            && !string.IsNullOrEmpty(NuGetApiKey) && !string.IsNullOrEmpty(NuGetUrl))
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
