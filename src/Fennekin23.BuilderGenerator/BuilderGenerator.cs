@@ -19,7 +19,7 @@ public class BuilderGenerator : IIncrementalGenerator
         
         IncrementalValuesProvider<ItemToGenerate> itemsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(BuilderGeneratorAttribute,
-                (node, _) => node is RecordDeclarationSyntax,
+                (node, _) => node is RecordDeclarationSyntax || node is ClassDeclarationSyntax,
                 (syntaxContext, token) => GetItemToGenerate(syntaxContext, token))
             .WithTrackingName(TrackingNames.InitialExtraction)
             .Where(static m => m is not null)
@@ -132,6 +132,6 @@ public class BuilderGenerator : IIncrementalGenerator
     {
         StringBuilder sb = new();
         var result = SourceGenerationHelper.GenerateBuilderClass(sb, in itemToGenerate);
-        context.AddSource(itemToGenerate.Name + "Builder.g.cs", SourceText.From(result, Encoding.UTF8));    
+        context.AddSource(itemToGenerate.Name + "Builder.g.cs", SourceText.From(result, Encoding.UTF8));
     }
 }
