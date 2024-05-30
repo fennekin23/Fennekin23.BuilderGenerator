@@ -27,7 +27,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+      <Compile Remove="Snapshots/*.*" />
+      <None Include="Snapshots/*.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
