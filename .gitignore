@@ -47,3 +47,4 @@ msbuild.wrn
 
 # Test results
 *.received.txt
+*.received.cs
