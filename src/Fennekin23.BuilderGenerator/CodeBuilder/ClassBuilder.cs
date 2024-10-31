@@ -23,7 +23,7 @@ public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
         return this;
     }
     
-    public ClassDefinitionBuilder WithModifiers(params ReadOnlySpan<string> modifiers)
+    /*public ClassDefinitionBuilder WithModifiers(params ReadOnlySpan<string> modifiers)
     {
         if (!modifiers.IsEmpty)
         {
@@ -35,11 +35,11 @@ public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
         }
         
         return this;
-    }
+    }*/
     
     public ClassDefinitionBuilder WithName(string name)
     {
-        builder.AppendLine($"class {name}");
+        builder.AppendLine($"sealed class {name}");
         return this;
     }
 

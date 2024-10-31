@@ -13,9 +13,11 @@ public static class SourceGenerationHelper
         SourceFileBuilder sfb = new (sb);
         sfb.AddHeader();
         sfb.EnableNullable();
+        // ---------- namespace ----------
         sfb.AddNamespace(nb => nb
             .WithName("Fennekin23.BuilderGenerator")
             .WithBody(nb => nb
+                // ---------- class ----------
                 .AddClass(cb => cb
                     .WithComment("""
                                      /// <summary>"
@@ -43,7 +45,7 @@ public static class SourceGenerationHelper
         sfb.EnableNullable();
         // ---------- namespace ----------
         sfb.AddNamespace(nb => nb
-            .WithName(currentItem.NameSpace)
+            .WithName(currentItem.Namespace)
             .WithBody(nb => nb
                 // ---------- class ----------
                 .AddClass(cb => cb
@@ -52,46 +54,45 @@ public static class SourceGenerationHelper
                                       ///    Builder class for <see cref="{currentItem.FullyQualifiedName}" />.
                                       /// </summary>
                                   """)
-                    .WithAccessModifier(currentItem.Accessibility)
-                    .WithModifiers("sealed", "partial")
+                    .WithAccessModifier(currentItem.AccessModifier)
                     .WithName(builderClassName)
                     .WithBody(cb =>
                     {
-                        foreach (var param in currentItem.ConstructorParameters)
+                        foreach (var parameter in currentItem.ConstructorParameters)
                         {
-                            string backingFiledName = ToFieldName(param.Name);
+                            string backingFiledName = ToFieldName(parameter.Name);
 
                             cb.AddField(fb => fb
                                 .WithAccessModifier("private")
-                                .WithType(param.Type)
+                                .WithType(parameter.Type)
                                 .WithName(backingFiledName)
                                 .WithValue("default!"));
 
                             cb.AddMethod(mb => mb
                                 .WithAccessModifier("public")
                                 .WithReturnType(builderClassName)
-                                .WithName($"With{param.Name}")
-                                .WithParameter(new KeyValuePair<string, string>(param.Type, "value"))
+                                .WithName($"With{parameter.Name}")
+                                .WithParameter((parameter.Type, "value"))
                                 .WithBody(bb => bb
                                     .WithStatements([$"{backingFiledName} = value;"],
                                         rb => rb.WithSelfResult())));
                         }
 
-                        foreach (var param in currentItem.Properties)
+                        foreach (var property in currentItem.Properties)
                         {
-                            string backingFiledName = ToFieldName(param.Name);
+                            string backingFiledName = ToFieldName(property.Name);
 
                             cb.AddField(fb => fb
                                 .WithAccessModifier("private")
-                                .WithType(param.Type)
+                                .WithType(property.Type)
                                 .WithName(backingFiledName)
                                 .WithValue("default!"));
 
                             cb.AddMethod(mb => mb
                                 .WithAccessModifier("public")
                                 .WithReturnType(builderClassName)
-                                .WithName($"With{param.Name}")
-                                .WithParameter(new KeyValuePair<string, string>(param.Type, "value"))
+                                .WithName($"With{property.Name}")
+                                .WithParameter((property.Type, "value"))
                                 .WithBody(bb => bb
                                     .WithStatements([$"{backingFiledName} = value;"],
                                         rb => rb.WithSelfResult())));
@@ -111,14 +112,12 @@ public static class SourceGenerationHelper
                                             .WithType(currentItem.FullyQualifiedName)
                                             .WithConstructorParameters(
                                                 currentItem.ConstructorParameters
-                                                    .Select(i =>
-                                                        new KeyValuePair<string, string>(i.Name, ToFieldName(i.Name)))
+                                                    .Select(i => (i.Name, ToFieldName(i.Name)))
                                                     .ToArray()
                                             )
                                             .WithPropertiesInitializer(
                                                 currentItem.Properties
-                                                    .Select(i =>
-                                                        new KeyValuePair<string, string>(i.Name, ToFieldName(i.Name)))
+                                                    .Select(i => (i.Name, ToFieldName(i.Name)))
                                                     .ToArray()
                                             ));
                                     })));

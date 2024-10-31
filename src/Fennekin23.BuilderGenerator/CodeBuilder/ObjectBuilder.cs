@@ -14,7 +14,7 @@ public class ObjectBuilder(
         return this;
     }
 
-    public ObjectBuilder WithConstructorParameters(params KeyValuePair<string, string>[] parameters)
+    public ObjectBuilder WithConstructorParameters(params (string Name, string Value)[] parameters)
     {
         builder.AppendLineIndented(_baseIndentLevel, "(");
         if (parameters.Any())
@@ -22,7 +22,7 @@ public class ObjectBuilder(
             for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
-                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Key}: {param.Value}");
+                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Name}: {param.Value}");
                 if (i < (parameters.Length - 1))
                 {
                     builder.AppendLine(",");
@@ -38,15 +38,15 @@ public class ObjectBuilder(
         return this;
     }
 
-    public ObjectBuilder WithPropertiesInitializer(params ReadOnlySpan<KeyValuePair<string, string>> parameters)
+    public ObjectBuilder WithPropertiesInitializer(params (string Name, string Value)[] parameters)
     {
         builder.AppendLineIndented(_baseIndentLevel, "{");
-        if (!parameters.IsEmpty)
+        if (parameters.Any())
         {
             for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
-                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Key} = {param.Value}");
+                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Name} = {param.Value}");
                 if (i < (parameters.Length - 1))
                 {
                     builder.AppendLine(",");

@@ -10,7 +10,7 @@ namespace Fennekin23.BuilderGenerator.Tests
     /// <summary>
     ///    Builder class for <see cref="Fennekin23.BuilderGenerator.Tests.SamplePublicPropertiesClass" />.
     /// </summary>
-    public sealed partial class SamplePublicPropertiesClassBuilder
+    public sealed class SamplePublicPropertiesClassBuilder
     {
         private String _stringproperty = default!;
         public SamplePublicPropertiesClassBuilder WithStringProperty(String value)

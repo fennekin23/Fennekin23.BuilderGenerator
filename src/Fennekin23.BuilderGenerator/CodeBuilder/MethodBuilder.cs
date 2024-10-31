@@ -24,9 +24,9 @@ public class MethodDefinitionBuilder(int indentLevel, StringBuilder builder)
         return this;
     }
 
-    public MethodDefinitionBuilder WithParameter(KeyValuePair<string, string> parameter)
+    public MethodDefinitionBuilder WithParameter((string Type, string Name) parameter)
     {
-        builder.AppendLine($"({parameter.Key} {parameter.Value})");
+        builder.AppendLine($"({parameter.Type} {parameter.Name})");
         return this;
     }
     

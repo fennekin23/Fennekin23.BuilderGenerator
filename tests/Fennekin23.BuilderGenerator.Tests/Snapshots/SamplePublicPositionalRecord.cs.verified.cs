@@ -10,7 +10,7 @@ namespace Fennekin23.BuilderGenerator.Tests.Samples
     /// <summary>
     ///    Builder class for <see cref="Fennekin23.BuilderGenerator.Tests.Samples.SamplePublicPositionalRecord" />.
     /// </summary>
-    public sealed partial class SamplePublicPositionalRecordBuilder
+    public sealed class SamplePublicPositionalRecordBuilder
     {
         private String _stringproperty = default!;
         public SamplePublicPositionalRecordBuilder WithStringProperty(String value)
