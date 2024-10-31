@@ -2,36 +2,72 @@ using System.Text;
 
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
-public class ClassBuilder(int indentLevel, StringBuilder builder)
-    : CodeBuilderBase(indentLevel, builder), IDisposable
+public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
 {
-    private readonly int _indentLevel = indentLevel;
-    private readonly StringBuilder _builder = builder;
-
-    public void DefineClass(string accessModifier, string name)
+    public ClassDefinitionBuilder WithComment(string comment)
     {
-        _builder.AppendLineIndented(_indentLevel, $"{accessModifier} sealed class {name}");
-        _builder.AppendLineIndented(_indentLevel, "{");   
+        builder.AppendLine(comment);
+        return this;
+    }
+
+    public ClassDefinitionBuilder WithAttribute(string attribute)
+    {
+        builder.AppendLineIndented(indentLevel, attribute);
+        return this;
     }
     
-    public void DefinePartialClass(string accessModifier, string name)
+    public ClassDefinitionBuilder WithAccessModifier(string accessModifier)
     {
-        _builder.AppendLineIndented(_indentLevel, $"{accessModifier} sealed partial class {name}");
-        _builder.AppendLineIndented(_indentLevel, "{");   
+        builder.AppendIndented(indentLevel, accessModifier);
+        builder.Append(' ');
+        return this;
+    }
+    
+    public ClassDefinitionBuilder WithModifiers(params ReadOnlySpan<string> modifiers)
+    {
+        if (!modifiers.IsEmpty)
+        {
+            foreach (var modifier in modifiers)
+            {
+                builder.Append(modifier);
+                builder.Append(' ');
+            }
+        }
+        
+        return this;
+    }
+    
+    public ClassDefinitionBuilder WithName(string name)
+    {
+        builder.AppendLine($"class {name}");
+        return this;
     }
 
-    public FieldBuilder CreateFieldBuilder(
-        string accessModifier,
-        string type,
-        string name)
-        => new(accessModifier, type, name, _indentLevel + 4, builder); 
+    public void WithBody(Action<ClassBodyBuilder>? buildBody = null)
+    {
+        builder.AppendLineIndented(indentLevel, "{");
+        if (buildBody is not null)
+        {
+            ClassBodyBuilder bodyBuilder = new(indentLevel + 4, builder);
+            buildBody(bodyBuilder);
+        }
+        builder.AppendLineIndented(indentLevel, "}");
+    }
+    
+    public class ClassBodyBuilder(int indentLevel, StringBuilder builder)
+    {
+        public void AddField(Action<FieldBuilder> buildField)
+        {
+            FieldBuilder fieldBuilder = new(indentLevel, builder);
+            buildField(fieldBuilder);
 
-    public MethodBuilder CreateMethodBuilder(
-        string accessModifier,
-        string returnType,
-        string name,
-        IEnumerable<KeyValuePair<string, string>>? parameters = null)
-        => new(accessModifier, returnType, name, parameters ?? [], _indentLevel + 4, _builder);
+            builder.AppendLine(";");
+        }
 
-    public void Dispose() => _builder.AppendLineIndented(_indentLevel, "}");
+        public void AddMethod(Action<MethodDefinitionBuilder> buildMethod)
+        {
+            MethodDefinitionBuilder methodBuilder = new(indentLevel, builder);
+            buildMethod(methodBuilder);
+        }
+    }
 }

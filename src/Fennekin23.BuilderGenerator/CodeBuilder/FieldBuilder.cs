@@ -3,22 +3,33 @@ using System.Text;
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
 public class FieldBuilder(
-    string accessModifier,
-    string type,
-    string name,
     int indentLevel,
     StringBuilder builder)
-    : CodeBuilderBase(indentLevel, builder), IDisposable
 {
-    private readonly int _baseIndentLevel = indentLevel;
-    private readonly StringBuilder _builder = builder;
-
-    public void StartField()
+    public FieldBuilder WithAccessModifier(string accessModifier)
     {
-        _builder.AppendLineIndented(_baseIndentLevel, $"{accessModifier} {type} {name} = default!;");
+        builder.AppendIndented(indentLevel, accessModifier);
+        builder.Append(' ');
+        return this;
     }
-
-    public void Dispose()
+    
+    public FieldBuilder WithType(string typeName)
     {
+        builder.Append(typeName);
+        builder.Append(' ');
+        return this;
+    }
+    
+    public FieldBuilder WithName(string name)
+    {
+        builder.Append(name);
+        builder.Append(' ');
+        return this;
+    }
+    
+    public FieldBuilder WithValue(string? value = null)
+    {
+        builder.Append($"= {value ?? "default!"}");
+        return this;
     }
 }

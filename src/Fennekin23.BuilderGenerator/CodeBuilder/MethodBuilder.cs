@@ -2,64 +2,83 @@ using System.Text;
 
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
-public class MethodBuilder(
-    string accessModifier,
-    string returnType,
-    string name,
-    IEnumerable<KeyValuePair<string, string>> parameters,
-    int indentLevel,
-    StringBuilder builder)
-    : CodeBuilderBase(indentLevel, builder), IDisposable
+public class MethodDefinitionBuilder(int indentLevel, StringBuilder builder)
 {
-    private readonly int _baseIndentLevel = indentLevel;
-    private readonly int _innerIndentLevel = indentLevel + 4;
-    private readonly StringBuilder _builder = builder;
-
-    public int IndentLevel => _baseIndentLevel;
+    public MethodDefinitionBuilder WithAccessModifier(string accessModifier)
+    {
+        builder.AppendIndented(indentLevel, accessModifier);
+        builder.Append(' ');
+        return this;
+    }
     
-    public void StartMethod()
+    public MethodDefinitionBuilder WithReturnType(string typeName)
     {
-        _builder.AppendIndented(_baseIndentLevel, $"{accessModifier} {returnType} {name}");
-        _builder.Append('(');
-        foreach (var parameter in parameters)
+        builder.Append(typeName);
+        builder.Append(' ');
+        return this;
+    }
+    
+    public MethodDefinitionBuilder WithName(string name)
+    {
+        builder.Append(name);
+        return this;
+    }
+
+    public MethodDefinitionBuilder WithParameter(KeyValuePair<string, string> parameter)
+    {
+        builder.AppendLine($"({parameter.Key} {parameter.Value})");
+        return this;
+    }
+    
+    public MethodDefinitionBuilder WithoutParameters()
+    {
+        builder.AppendLine("()");
+        return this;
+    }
+    
+    public void WithBody(Action<MethodBodyBuilder>? buildBody = null)
+    {
+        builder.AppendLineIndented(indentLevel, "{");
+        if (buildBody is not null)
         {
-            _builder.Append($"{parameter.Key} {parameter.Value}");
+            MethodBodyBuilder bodyBuilder = new MethodBodyBuilder(indentLevel + 4, builder);
+            buildBody(bodyBuilder);
         }
-        _builder.Append(')');
-        _builder.AppendLine();
-        _builder.AppendLineIndented(_baseIndentLevel, "{");   
+        builder.AppendLineIndented(indentLevel, "}");
     }
 
-    public void Body(params ReadOnlySpan<string> lines)
+    public class MethodBodyBuilder(int indentLevel, StringBuilder builder)
     {
-        foreach (var line in lines)
+        public void WithStatements(ReadOnlySpan<string> statements, Action<ReturnBuilder>? buildResult)
         {
-            _builder.AppendLineIndented(_innerIndentLevel, line);
-        }
-    }
-
-    public void ReturnObjectResult(Action<ObjectBuilder> buildObject)
-    {
-        _builder.AppendLineIndented(_innerIndentLevel, "return");
-        
-        ObjectBuilder objectBuilder = new(_innerIndentLevel, _builder);
-        buildObject(objectBuilder);
-
-        _builder.AppendLine(";");
-    }
-
-    public void Return(params ReadOnlySpan<string> lines)
-    {
-        _builder.AppendIndented(_innerIndentLevel, "return ");
-        _builder.AppendLine(lines[0]);
-        if (lines.Length > 1)
-        {
-            for (int i = 1; i < lines.Length; i++)
+            foreach (var statement in statements)
             {
-                _builder.AppendLineIndented(_innerIndentLevel + 4, lines[i]);
+                builder.AppendLineIndented(indentLevel, statement);
+            }
+
+            if (buildResult is not null)
+            {
+                ReturnBuilder returnBuilder = new(indentLevel, builder);
+                buildResult(returnBuilder);
+            }
+        }
+        
+        public class ReturnBuilder(int indentLevel, StringBuilder builder)
+        {
+            public void WithSelfResult()
+            {
+                builder.AppendLineIndented(indentLevel, "return this;");
+            }
+        
+            public void WithObjectResult(Action<ObjectBuilder> buildObject)
+            {
+                builder.AppendLineIndented(indentLevel, "return");
+        
+                ObjectBuilder objectBuilder = new(indentLevel, builder);
+                buildObject(objectBuilder);
+
+                builder.AppendLine(";");
             }
         }
     }
-
-    public void Dispose() => _builder.AppendLineIndented(_baseIndentLevel, "}");
 }
