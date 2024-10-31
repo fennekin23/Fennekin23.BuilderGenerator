@@ -1,63 +1,53 @@
-using System.Text;
-
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
-public class ObjectBuilder(
-    int indentLevel,
-    StringBuilder builder)
+public class ObjectBuilder(CodeStringBuilder builder)
 {
-    private readonly int _baseIndentLevel = indentLevel + 4;
-
     public ObjectBuilder WithType(string typeName)
     {
-        builder.AppendLineIndented(_baseIndentLevel, $"new {typeName}");
+        builder.AppendLineIndented($"new {typeName}");
         return this;
     }
 
     public ObjectBuilder WithConstructorParameters(params (string Name, string Value)[] parameters)
     {
-        builder.AppendLineIndented(_baseIndentLevel, "(");
+        builder.AppendLineIndented("(");
         if (parameters.Any())
         {
+            CodeStringBuilder innerBuilder = builder.Indent();
             for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
-                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Name}: {param.Value}");
+                innerBuilder.AppendIndented($"{param.Name}: {param.Value}");
                 if (i < (parameters.Length - 1))
                 {
-                    builder.AppendLine(",");
+                    innerBuilder.Append(",");
                 }
-                else
-                {
-                    builder.AppendLine();
-                }
+                innerBuilder.AppendLine();
             }
         }
-        builder.AppendLineIndented(_baseIndentLevel, ")");
+        builder.AppendLineIndented(")");
 
         return this;
     }
 
     public ObjectBuilder WithPropertiesInitializer(params (string Name, string Value)[] parameters)
     {
-        builder.AppendLineIndented(_baseIndentLevel, "{");
+        builder.AppendLineIndented("{");
         if (parameters.Any())
         {
+            CodeStringBuilder innerBuilder = builder.Indent();
             for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
-                builder.AppendIndented(_baseIndentLevel + 4, $"{param.Name} = {param.Value}");
+                innerBuilder.AppendIndented($"{param.Name} = {param.Value}");
                 if (i < (parameters.Length - 1))
                 {
-                    builder.AppendLine(",");
+                    innerBuilder.Append(",");
                 }
-                else
-                {
-                    builder.AppendLine();
-                }
+                innerBuilder.AppendLine();
             }
         }
-        builder.AppendIndented(_baseIndentLevel, "}");
+        builder.AppendIndented("}");
         
         return this;
     }

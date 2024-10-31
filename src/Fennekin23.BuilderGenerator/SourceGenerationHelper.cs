@@ -1,4 +1,3 @@
-using System.Text;
 using Fennekin23.BuilderGenerator.CodeBuilder;
 using Fennekin23.BuilderGenerator.Metadata;
 
@@ -8,9 +7,7 @@ public static class SourceGenerationHelper
 {
     public static string GenerateAttributeClass()
     {
-        StringBuilder sb = new();
-        
-        SourceFileBuilder sfb = new (sb);
+        SourceFileBuilder sfb = new (820);
         sfb.AddHeader();
         sfb.EnableNullable();
         // ---------- namespace ----------
@@ -30,17 +27,19 @@ public static class SourceGenerationHelper
                     .WithName("BuilderGeneratorAttribute : global::System.Attribute")
                     .WithBody())));
 
-        return sb.ToString();
+        return sfb.Build();
     }
     
     public static string GenerateBuilderClass(in ItemToGenerate item)
     {
         var currentItem = item;
-        
-        StringBuilder sb = new();
         var builderClassName = $"{item.Name}Builder";
-        
-        SourceFileBuilder sfb = new (sb);
+
+        int estimatedCapacity =
+            460
+            + currentItem.ConstructorParameters.Count() * 140
+            + currentItem.Properties.Count() * 140;
+        SourceFileBuilder sfb = new (estimatedCapacity);
         sfb.AddHeader();
         sfb.EnableNullable();
         // ---------- namespace ----------
@@ -122,8 +121,8 @@ public static class SourceGenerationHelper
                                             ));
                                     })));
                     }))));
-        
-        return sb.ToString();
+
+        return sfb.Build();
     }
 
     private static string ToFieldName(string value) => $"_{value.ToLowerInvariant()}";

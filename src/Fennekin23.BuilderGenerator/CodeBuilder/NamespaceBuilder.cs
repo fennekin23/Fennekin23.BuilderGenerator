@@ -1,31 +1,29 @@
-using System.Text;
-
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
-public class NamespaceDefinitionBuilder(int indentLevel, StringBuilder builder)
+public class NamespaceDefinitionBuilder(CodeStringBuilder builder)
 {
     public NamespaceDefinitionBuilder WithName(string name)
     {
-        builder.AppendLineIndented(indentLevel, $"namespace {name}");
+        builder.AppendLineIndented($"namespace {name}");
         return this;
     }
 
     public void WithBody(Action<NamespaceBodyBuilder>? buildBody = null)
     {
-        builder.AppendLineIndented(indentLevel, "{");
+        builder.AppendLineIndented("{");
         if (buildBody is not null)
         {
-            NamespaceBodyBuilder bodyBuilder = new(indentLevel + 4, builder);
+            NamespaceBodyBuilder bodyBuilder = new(builder.Indent());
             buildBody(bodyBuilder);
         }
-        builder.AppendLineIndented(indentLevel, "}");
+        builder.AppendLineIndented("}");
     }
 
-    public class NamespaceBodyBuilder(int indentLevel, StringBuilder builder)
+    public class NamespaceBodyBuilder(CodeStringBuilder builder)
     {
         public void AddClass(Action<ClassDefinitionBuilder> buildClass)
         {
-            ClassDefinitionBuilder classBuilder = new(indentLevel, builder);
+            ClassDefinitionBuilder classBuilder = new(builder);
             buildClass(classBuilder);
         }
     }

@@ -1,8 +1,6 @@
-using System.Text;
-
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
-public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
+public class ClassDefinitionBuilder(CodeStringBuilder builder)
 {
     public ClassDefinitionBuilder WithComment(string comment)
     {
@@ -12,30 +10,16 @@ public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
 
     public ClassDefinitionBuilder WithAttribute(string attribute)
     {
-        builder.AppendLineIndented(indentLevel, attribute);
+        builder.AppendLineIndented(attribute);
         return this;
     }
     
     public ClassDefinitionBuilder WithAccessModifier(string accessModifier)
     {
-        builder.AppendIndented(indentLevel, accessModifier);
-        builder.Append(' ');
+        builder.AppendIndented(accessModifier);
+        builder.Append(" ");
         return this;
     }
-    
-    /*public ClassDefinitionBuilder WithModifiers(params ReadOnlySpan<string> modifiers)
-    {
-        if (!modifiers.IsEmpty)
-        {
-            foreach (var modifier in modifiers)
-            {
-                builder.Append(modifier);
-                builder.Append(' ');
-            }
-        }
-        
-        return this;
-    }*/
     
     public ClassDefinitionBuilder WithName(string name)
     {
@@ -45,20 +29,20 @@ public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
 
     public void WithBody(Action<ClassBodyBuilder>? buildBody = null)
     {
-        builder.AppendLineIndented(indentLevel, "{");
+        builder.AppendLineIndented("{");
         if (buildBody is not null)
         {
-            ClassBodyBuilder bodyBuilder = new(indentLevel + 4, builder);
+            ClassBodyBuilder bodyBuilder = new(builder.Indent());
             buildBody(bodyBuilder);
         }
-        builder.AppendLineIndented(indentLevel, "}");
+        builder.AppendLineIndented("}");
     }
     
-    public class ClassBodyBuilder(int indentLevel, StringBuilder builder)
+    public class ClassBodyBuilder(CodeStringBuilder builder)
     {
         public void AddField(Action<FieldBuilder> buildField)
         {
-            FieldBuilder fieldBuilder = new(indentLevel, builder);
+            FieldBuilder fieldBuilder = new(builder);
             buildField(fieldBuilder);
 
             builder.AppendLine(";");
@@ -66,7 +50,7 @@ public class ClassDefinitionBuilder(int indentLevel, StringBuilder builder)
 
         public void AddMethod(Action<MethodDefinitionBuilder> buildMethod)
         {
-            MethodDefinitionBuilder methodBuilder = new(indentLevel, builder);
+            MethodDefinitionBuilder methodBuilder = new(builder);
             buildMethod(methodBuilder);
         }
     }
