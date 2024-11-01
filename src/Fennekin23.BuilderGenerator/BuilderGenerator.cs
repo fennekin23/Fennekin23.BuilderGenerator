@@ -14,8 +14,9 @@ public class BuilderGenerator : IIncrementalGenerator
     
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        string attributeSource = SourceGenerationHelper.GenerateAttributeClass();
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "BuilderGeneratorAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
+            "BuilderGeneratorAttribute.g.cs", SourceText.From(attributeSource, Encoding.UTF8)));
         
         IncrementalValuesProvider<ItemToGenerate> itemsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(BuilderGeneratorAttribute,
@@ -130,8 +131,7 @@ public class BuilderGenerator : IIncrementalGenerator
     
     private static void Execute(in ItemToGenerate itemToGenerate, SourceProductionContext context)
     {
-        StringBuilder sb = new();
-        var result = SourceGenerationHelper.GenerateBuilderClass(sb, in itemToGenerate);
+        var result = SourceGenerationHelper.GenerateBuilderClass(in itemToGenerate);
         context.AddSource(itemToGenerate.Name + "Builder.g.cs", SourceText.From(result, Encoding.UTF8));
     }
 }
