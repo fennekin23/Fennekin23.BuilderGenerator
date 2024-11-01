@@ -22,3 +22,5 @@ jobs:
       with:
         labels: "dependencies,.NET"
         repo-token: ${{ secrets.ACCESS_TOKEN }}
+      secrets:
+        repo-token: ${{ secrets.ACCESS_TOKEN }}
