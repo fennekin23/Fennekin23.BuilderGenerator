@@ -14,13 +14,11 @@ on:
 
 jobs:
   update-dotnet-sdk:
-    permissions:
-      contents: write
-      pull-requests: write
     name: Update .NET SDK
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: martincostello/update-dotnet-sdk@v3
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        labels: "dependencies,.NET"
+        repo-token: ${{ secrets.ACCESS_TOKEN }}
