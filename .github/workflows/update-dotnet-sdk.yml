@@ -26,4 +26,5 @@ jobs:
       with:
         labels: "dependencies,.NET"
         repo-token: ${{ secrets.ACCESS_TOKEN }}
+        branch-name: main
         dry-run: true
