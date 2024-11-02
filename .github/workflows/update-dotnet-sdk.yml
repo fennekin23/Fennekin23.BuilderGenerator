@@ -28,4 +28,4 @@ jobs:
       with:
         labels: "dependencies,.NET"
         repo-token: ${{ secrets.ACCESS_TOKEN }}
-        dry-run: true
+        dry-run: false
