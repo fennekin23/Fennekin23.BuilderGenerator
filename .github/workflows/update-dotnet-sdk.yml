@@ -28,4 +28,5 @@ jobs:
       with:
         labels: "dependencies,.NET"
         repo-token: ${{ secrets.ACCESS_TOKEN }}
+        user-name: fennekin23
         dry-run: false
