@@ -22,9 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: main
     - uses: martincostello/update-dotnet-sdk@v3
       with:
         labels: "dependencies,.NET"
         repo-token: ${{ secrets.ACCESS_TOKEN }}
+        dry-run: true
