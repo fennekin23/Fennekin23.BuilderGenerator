@@ -15,14 +15,10 @@ on:
 jobs:
   update-dotnet-sdk:
     name: Update .NET SDK
-    runs-on: ubuntu-latest
     permissions:
       contents: write
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: main
-    - uses: martincostello/update-dotnet-sdk@v3
-      with:
-        labels: "dependencies,.NET"
-        repo-token: ${{ secrets.ACCESS_TOKEN }}
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@v3
+    with:
+      labels: "dependencies,.NET"
+    secrets:
+      repo-token: ${{ secrets.ACCESS_TOKEN }}
