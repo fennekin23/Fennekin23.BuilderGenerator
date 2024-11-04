@@ -38,7 +38,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
-            9.0.100-rc.1.24452.12
+            9.0.x
             8.0.x
             7.0.x
       - name: 'Cache: .nuke/temp, ~/.nuget/packages'
