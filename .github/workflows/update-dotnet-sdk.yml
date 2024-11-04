@@ -12,19 +12,13 @@ on:
   # Manual trigger to update the .NET SDK on-demand.
   workflow_dispatch:
 
-# No additional permissions are required for GITHUB_TOKEN as we are using a PAT.
-permissions:
-  contents: read
-
 jobs:
   update-dotnet-sdk:
     name: Update .NET SDK
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: main
-    - uses: martincostello/update-dotnet-sdk@v3
-      with:
-        labels: "dependencies,.NET"
-        repo-token: ${{ secrets.ACCESS_TOKEN }}
+    permissions:
+      contents: write
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@v3
+    with:
+      labels: "dependencies,.NET"
+    secrets:
+      repo-token: ${{ secrets.ACCESS_TOKEN }}
