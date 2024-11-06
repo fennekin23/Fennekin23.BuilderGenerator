@@ -12,13 +12,15 @@ on:
   # Manual trigger to update the .NET SDK on-demand.
   workflow_dispatch:
 
+permissions:
+  contents: read
+      
 jobs:
   update-dotnet-sdk:
     name: Update .NET SDK
-    permissions:
-      contents: write
     uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@v3
     with:
+      commit-message-prefix: "chore:"
       labels: "dependencies,.NET"
     secrets:
       repo-token: ${{ secrets.ACCESS_TOKEN }}
