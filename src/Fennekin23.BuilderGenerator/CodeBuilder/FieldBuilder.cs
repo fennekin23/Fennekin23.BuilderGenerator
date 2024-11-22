@@ -1,3 +1,5 @@
+using Fennekin23.BuilderGenerator.Metadata;
+
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
 public class FieldBuilder(CodeStringBuilder builder)
@@ -9,9 +11,13 @@ public class FieldBuilder(CodeStringBuilder builder)
         return this;
     }
     
-    public FieldBuilder WithType(string typeName)
+    public FieldBuilder WithType(TypeDefinition type)
     {
-        builder.Append(typeName);
+        builder.Append(type.Name);
+        if (type.IsNullable)
+        {
+            builder.Append("?");
+        }
         builder.Append(" ");
         return this;
     }

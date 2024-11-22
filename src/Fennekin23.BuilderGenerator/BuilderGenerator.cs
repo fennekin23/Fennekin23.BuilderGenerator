@@ -42,7 +42,7 @@ public class BuilderGenerator : IIncrementalGenerator
 
         var name = symbol.Name;
         var nameSpace = symbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : symbol.ContainingNamespace.ToString();
-        var accessibility = symbol.DeclaredAccessibility.ToString().ToLowerInvariant();
+        var accessModifier = symbol.DeclaredAccessibility.ToString().ToLowerInvariant();
 
         ImmutableArray<ISymbol> symbolMembers = symbol.GetMembers();
 
@@ -56,9 +56,11 @@ public class BuilderGenerator : IIncrementalGenerator
         List<IPropertySymbol> properties = FindProperties(symbolMembers);
         List<PropertyDefinition> propertiesDefinitions = GetPropertiesDefinitions(constructorParametersDefinitions, properties);
 
+        ct.ThrowIfCancellationRequested();
+        
         return new ItemToGenerate(name,
             nameSpace,
-            accessibility,
+            accessModifier,
             constructorParametersDefinitions,
             propertiesDefinitions);
     }
@@ -92,7 +94,13 @@ public class BuilderGenerator : IIncrementalGenerator
         return constructor?.Parameters == null
             ? []
             : constructor.Parameters
-                .Select(p => new ParameterDefinition(p.Name, p.Type.Name))
+                .Where(p => p.Type is INamedTypeSymbol)
+                .Select(p =>
+                    new ParameterDefinition(
+                        p.Name,
+                        GetTypeDefinition((p.Type as INamedTypeSymbol)!)
+                    )
+                )
                 .ToList();
     }
     
@@ -121,12 +129,24 @@ public class BuilderGenerator : IIncrementalGenerator
         List<IPropertySymbol> properties)
     {
         return properties
-            .Where(property => !IsPositional(property))
-            .Select(p => new PropertyDefinition(p.Name, p.Type.Name))
+            .Where(p => !IsPositional(p) && p.Type is INamedTypeSymbol)
+            .Select(p =>
+                new PropertyDefinition(
+                    p.Name,
+                    GetTypeDefinition((p.Type as INamedTypeSymbol)!)
+                )
+            )
             .ToList();
 
         bool IsPositional(IPropertySymbol property)
             => constructorParametersDefinitions.Any(i => i.Name.Equals(property.Name));
+    }
+
+    private static TypeDefinition GetTypeDefinition(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol is { NullableAnnotation: NullableAnnotation.Annotated, IsValueType: true }
+            ? new TypeDefinition(typeSymbol.TypeArguments[0].Name, true)
+            : new TypeDefinition(typeSymbol.Name, false);
     }
     
     private static void Execute(in ItemToGenerate itemToGenerate, SourceProductionContext context)

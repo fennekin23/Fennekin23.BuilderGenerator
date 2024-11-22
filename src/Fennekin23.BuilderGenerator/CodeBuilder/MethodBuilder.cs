@@ -1,3 +1,5 @@
+using Fennekin23.BuilderGenerator.Metadata;
+
 namespace Fennekin23.BuilderGenerator.CodeBuilder;
 
 public class MethodDefinitionBuilder(CodeStringBuilder builder)
@@ -22,9 +24,18 @@ public class MethodDefinitionBuilder(CodeStringBuilder builder)
         return this;
     }
 
-    public MethodDefinitionBuilder WithParameter((string Type, string Name) parameter)
+    public MethodDefinitionBuilder WithParameter((TypeDefinition Type, string Name) parameter)
     {
-        builder.AppendLine($"({parameter.Type} {parameter.Name})");
+        builder.Append("(");
+        builder.Append(parameter.Type.Name);
+        if (parameter.Type.IsNullable)
+        {
+            builder.Append("?");
+        }
+        builder.Append(" ");
+        builder.Append(parameter.Name);
+        builder.Append(")");
+        builder.AppendLine();
         return this;
     }
     
@@ -47,7 +58,7 @@ public class MethodDefinitionBuilder(CodeStringBuilder builder)
 
     public class MethodBodyBuilder(CodeStringBuilder builder)
     {
-        public void WithStatements(ReadOnlySpan<string> statements, Action<ReturnBuilder>? buildResult)
+        public void WithStatements(string[] statements, Action<ReturnBuilder>? buildResult)
         {
             foreach (var statement in statements)
             {
