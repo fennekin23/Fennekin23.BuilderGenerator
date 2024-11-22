@@ -18,8 +18,8 @@ namespace Fennekin23.BuilderGenerator.Tests
             _stringproperty = value;
             return this;
         }
-        private Int32 _intproperty = default!;
-        public SamplePublicConstructorClassBuilder WithintProperty(Int32 value)
+        private Int32? _intproperty = default!;
+        public SamplePublicConstructorClassBuilder WithintProperty(Int32? value)
         {
             _intproperty = value;
             return this;

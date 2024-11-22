@@ -1,6 +1,6 @@
 namespace Fennekin23.BuilderGenerator.Metadata;
 
-public class ItemToGenerate(
+public sealed class ItemToGenerate(
     string name,
     string @namespace,
     string accessModifier,

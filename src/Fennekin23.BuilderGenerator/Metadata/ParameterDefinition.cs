@@ -1,14 +1,14 @@
 namespace Fennekin23.BuilderGenerator.Metadata;
 
-public class ParameterDefinition(string name, string type) : IEquatable<ParameterDefinition>
+public sealed class ParameterDefinition(string name, TypeDefinition type) : IEquatable<ParameterDefinition>
 {
     public string Name { get; } = name;
-    public string Type { get; } = type;
+    public TypeDefinition Type { get; } = type;
 
     public bool Equals(ParameterDefinition other)
     {
         return string.Equals(Name, other.Name, StringComparison.Ordinal) 
-               && string.Equals(Type, other.Type, StringComparison.Ordinal);
+               && Type.Equals(other.Type);
     }
 
     public override bool Equals(object? obj)

@@ -15,7 +15,7 @@ public class CodeStringBuilder
 
     public static CodeStringBuilder Create(int capacity) => new(new StringBuilder(capacity), 0);
 
-    public CodeStringBuilder Indent() => new CodeStringBuilder(_stringBuilder, _indent + 4);
+    public CodeStringBuilder Indent() => new(_stringBuilder, _indent + 4);
     
     public void Append(string value)
     {
